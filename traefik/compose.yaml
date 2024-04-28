@@ -1,7 +1,7 @@
 services:
   traefik:
     container_name: traefik
-    image: cgr.dev/chainguard/traefik
+    image: traefik:v2.11.2
     labels:
       traefik.http.routers.api.entrypoints: websecure
       traefik.http.routers.api.rule: Host(`traefik.bodkys.house`)
