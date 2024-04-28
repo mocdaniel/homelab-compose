@@ -23,7 +23,7 @@ services:
     image: redis:alpine
     command: --save 60 1 --loglevel warning
     volumes:
-      - redis:/data
+      - /var/lib/authentik/redis:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       start_period: 20s
