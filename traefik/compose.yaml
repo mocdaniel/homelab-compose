@@ -1,0 +1,26 @@
+services:
+  traefik:
+    container_name: traefik
+    image: cgr.dev/chainguard/traefik
+    labels:
+      traefik.http.routers.traefik.entrypoint: websecure
+      traefik.http.routers.traefik.rule: Host(`traefik.bodkys.house`)
+      traefik.http.routers.traefik.tls: true
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.middlewares: bauth
+      traefik.http.middlewares.bauth.basicauth.users: dbodky:$$2y$$10$$w1Ab1308owoOgu7h/a2EEODHkchrn2QtykALaM9Wvcd/Qgpnrc6du
+    ports:
+      - 443:443
+      - 8080:8080
+    command: >
+      --providers.docker
+      --entrypoints.websecure.address=:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config:/etc/traefik
+    restart: unless-stopped
+    networks:
+      - traefik
+
+networks:
+  traefik: {}
