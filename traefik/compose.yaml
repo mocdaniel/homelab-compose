@@ -3,7 +3,7 @@ services:
     container_name: traefik
     image: cgr.dev/chainguard/traefik
     labels:
-      traefik.http.routers.api.entrypoint: websecure
+      traefik.http.routers.api.entrypoints: websecure
       traefik.http.routers.api.rule: Host(`traefik.bodkys.house`)
       traefik.http.routers.api.tls: true
       traefik.http.routers.api.service: api@internal
@@ -12,6 +12,7 @@ services:
     ports:
       - 443:443
     command: >
+      --api
       --providers.docker
       --entrypoints.websecure.address=:443
     volumes:
