@@ -5,9 +5,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_PASSWORD: ${PG_PASS:?database password required}
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_DB: ${PG_DB}
+      POSTGRES_PASSWORD: ${AUTHENTIK_POSTGRESQL__PASSWORD}
+      POSTGRES_USER: ${AUTHENTIK_POSTGRESQL__USER}
+      POSTGRES_DB: ${AUTHENTIK_POSTGRESQL__NAME}
     volumes:
       - /var/lib/authentik/database:/var/lib/postgresql/data
     healthcheck:
@@ -36,17 +36,15 @@ services:
     container_name: authentik
     image: ghcr.io/goauthentik/server:2024.4.1
     labels:
+      traefik.enable: true
       traefik.http.routers.authentik.entrypoints: websecure
       traefik.http.routers.authentik.rule: Host(`id.bodkys.house`)
       traefik.http.routers.authentik.tls: true
       traefik.http.routers.authentik.service: authentik
+      traefik.http.services.authentik.loadbalancer.server.port: 9000
     command: server
     env_file:
       - .env
-    environment:
-      AUTHENTIK_POSTGRESQL__USER: ${PG_USER}
-      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
     depends_on:
       - authentik-postgresql
       - authentik-redis
@@ -56,10 +54,6 @@ services:
     container_name: authentik-worker
     image: ghcr.io/goauthentik/server:2024.4.1
     command: worker
-    environment:
-      AUTHENTIK_POSTGRESQL__USER: ${PG_USER}
-      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
     env_file:
       - .env
     depends_on:
