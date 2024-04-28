@@ -12,7 +12,7 @@ services:
     ports:
       - 443:443
     command: >
-      --api
+      --api.dashboard
       --providers.docker
       --entrypoints.websecure.address=:443
     volumes:
