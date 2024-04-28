@@ -3,6 +3,7 @@ services:
     container_name: traefik
     image: traefik:v2.11.2
     labels:
+      traefik.enable: true
       traefik.http.routers.api.entrypoints: websecure
       traefik.http.routers.api.rule: Host(`traefik.bodkys.house`)
       traefik.http.routers.api.tls: true
