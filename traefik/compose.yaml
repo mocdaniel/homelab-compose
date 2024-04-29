@@ -11,6 +11,8 @@ services:
       traefik.http.routers.api.service: api@internal
     ports:
       - 443:443
+    group_add:
+      - 996
     command: >
       --api.dashboard
       --providers.docker
