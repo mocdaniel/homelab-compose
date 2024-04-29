@@ -1,7 +1,7 @@
 services:
   authentik-postgresql:
     container_name: authentik-postgresql
-    image: postgres:12-alpine
+    image: cgr.dev/chainguard/postgres:latest
     env_file:
       - .env
     environment:
@@ -22,7 +22,7 @@ services:
 
   authentik-redis:
     container_name: authentik-redis
-    image: redis:alpine
+    image: cgr.dev/chainguard/redis:latest
     command: --save 60 1 --loglevel warning
     volumes:
       - /var/lib/authentik/redis:/data
@@ -41,6 +41,7 @@ services:
     image: ghcr.io/goauthentik/server:2024.4.1
     labels:
       traefik.enable: true
+      traefik.docker.network: traefik
       traefik.http.routers.authentik.entryPoints: websecure
       traefik.http.routers.authentik.tls: true
       traefik.http.routers.authentik.rule: Host(`id.bodkys.house`) || HostRegexp(`{subdomain:[a-z0-9]+}.bodkys.house`) && PathPrefix(`/outpost.goauthentik.io/`)
