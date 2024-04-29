@@ -1,9 +1,8 @@
 http:
   middlewares:
-    # https://github.com/goauthentik/authentik/issues/2366
-    middlewares-authentik:
+    authentik-forward-auth:
       forwardAuth:
-        address: "http://authentik-server:9000/outpost.goauthentik.io/auth/traefik"
+        address: "http://authentik:9000/outpost.goauthentik.io/auth/traefik"
         trustForwardHeader: true
         authResponseHeaders:
           - X-authentik-username
