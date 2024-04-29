@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: ${AUTHENTIK_POSTGRESQL__NAME}
     volumes:
       - /var/lib/authentik/database:/var/lib/postgresql/data
+    networks:
+      - authentik
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       start_period: 20s
@@ -24,6 +26,8 @@ services:
     command: --save 60 1 --loglevel warning
     volumes:
       - /var/lib/authentik/redis:/data
+    networks:
+      - authentik
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       start_period: 20s
@@ -45,6 +49,8 @@ services:
     command: server
     env_file:
       - .env
+    networks:
+      - authentik
     depends_on:
       - authentik-postgresql
       - authentik-redis
@@ -56,7 +62,13 @@ services:
     command: worker
     env_file:
       - .env
+    networks:
+      - authentik
     depends_on:
       - authentik-postgresql
       - authentik-redis
     restart: unless-stopped
+
+networks:
+  authentik:
+    external: true

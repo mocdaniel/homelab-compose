@@ -28,4 +28,7 @@ services:
       - traefik
 
 networks:
-  traefik: {}
+  traefik:
+    external: true
+  authentik:
+    external: true
