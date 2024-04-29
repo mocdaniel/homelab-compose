@@ -38,6 +38,7 @@ services:
       - /etc/omni/omni.asc:/omni.asc
       - /etc/omni/tls.crt:/tls.crt
       - /etc/omni/tls.key:/tls.key
+      - /dev/net/tun:/dev/net/tun
     networks:
       - traefik
       - omni
