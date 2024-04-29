@@ -51,6 +51,7 @@ services:
       - .env
     networks:
       - authentik
+      - traefik
     depends_on:
       - authentik-postgresql
       - authentik-redis
@@ -71,4 +72,6 @@ services:
 
 networks:
   authentik:
+    external: true
+  traefik:
     external: true
