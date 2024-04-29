@@ -46,6 +46,9 @@ services:
       traefik.http.routers.authentik.tls: true
       traefik.http.routers.authentik.service: authentik
       traefik.http.services.authentik.loadbalancer.server.port: 9000
+      traefik.http.routers.authentik-rtr-outpost.rule: HostRegexp(`{subdomain:[a-z0-9-]+}.$DOMAIN`) && PathPrefix(`/outpost.goauthentik.io/`)"
+      traefik.http.routers.authentik-rtr-outpost.entrypoints: websecure"
+      traefik.http.routers.authentik-rtr-outpost.tls: true"
     command: server
     env_file:
       - .env
