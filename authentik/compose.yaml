@@ -44,7 +44,7 @@ services:
       traefik.http.routers.authentik.entrypoints: websecure
       traefik.http.routers.authentik.rule: Host(`id.bodkys.house`)
       traefik.http.routers.authentik.tls: true
-      traefik.http.routers.authentik.service: authentik-authentik
+      traefik.http.routers.authentik.service: authentik
       traefik.http.services.authentik.loadbalancer.server.port: 9000
     command: server
     env_file:
