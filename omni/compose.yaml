@@ -1,0 +1,50 @@
+services:
+  omni:
+    container_name: omni
+    image: ghcr.io/siderolabs/omni:v0.34.0
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik
+      traefik.http.routers.omni.entrypoints: websecure
+      traefik.http.routers.omni.tls: true
+      traefik.http.routers.omni.rule: Host(`omni.bodkys.house`)
+      traefik.http.routers.omni.service: omni
+      traefik.http.services.omni.loadbalancer.server.port: 443
+    ports:
+      - 8091:8091
+      - 8090:8090
+    command: >
+      --account-id=${OMNI_ACCOUNT_UUID}
+      --name=omni
+      --cert=/tls.crt
+      --key=/tls.key
+      --machine-api-cert=/tls.crt
+      --machine-api-key=/tls.key
+      --private-key-source='file:///omni.asc'
+      --event-sink-port=8091
+      --bind-addr=0.0.0.0:443
+      --machine-api-bind-addr=0.0.0.0:8090
+      --k8s-proxy-bind-addr=0.0.0.0:8100
+      --advertised-api-url=https://omni.bodkys.house/
+      --advertised-kubernetes-proxy-url=https://omni.bodkys.house:8100/
+      --siderolink-api-advertised-url=https://omni.bodkys.house:8090/
+      --siderolink-wireguard-advertised-addr=https://127.0.0.1:50180/
+      --initial-users=${INITIAL_USER_EMAILS}
+      ${AUTH}
+    env_file:
+      - .env
+    volumes:
+      - /var/lib/omni/etcd:/_out/etcd
+      - /etc/omni/omni.asc:/omni.asc
+      - /etc/omni/tls.crt:/tls.crt
+      - /etc/omni/tls.key:/tls.key
+    networks:
+      - traefik
+      - omni
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true
+  omni:
+    external: true
