@@ -18,14 +18,15 @@ services:
       --providers.docker.exposedByDefault=false
       --providers.file.directory=/etc/traefik
       --entrypoints.websecure.address=:443
-      --entrypoints.websecure.forwardedHeaders.trustedIPs=172.0.0.1/32,192.168.1.0/24
-      --entrypoints.websecure.proxyProtocol.trustedIPs=172.0.0.1/32,192.168.1.0/24
+      --entrypoints.websecure.forwardedHeaders.insecure=true
+      --entrypoints.websecure.proxyProtocol.insecure=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config:/etc/traefik
     restart: unless-stopped
     networks:
       - traefik
+      - authentik
 
 networks:
   traefik:
