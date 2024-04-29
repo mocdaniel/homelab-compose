@@ -41,14 +41,11 @@ services:
     image: ghcr.io/goauthentik/server:2024.4.1
     labels:
       traefik.enable: true
-      traefik.http.routers.authentik.entrypoints: websecure
-      traefik.http.routers.authentik.rule: Host(`id.bodkys.house`)
+      traefik.http.routers.authentik.entryPoints: websecure
       traefik.http.routers.authentik.tls: true
+      traefik.http.routers.authentik.rule: Host(`id.bodkys.house`) || HostRegexp(`{subdomain:[a-z0-9]+}.bodkys.house`) && PathPrefix(`/outpost.goauthentik.io/`)
       traefik.http.routers.authentik.service: authentik
       traefik.http.services.authentik.loadbalancer.server.port: 9000
-      traefik.http.routers.authentik-transmission.rule: Host(`transmission.bodkys.house`) && PathPrefix(`/outpost.goauthentik.io/`)
-      traefik.http.routers.authentik-transmission.entrypoints: websecure
-      traefik.http.routers.authentik-transmission.tls: true
     command: server
     env_file:
       - .env
