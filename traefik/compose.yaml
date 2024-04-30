@@ -19,6 +19,7 @@ services:
       --providers.docker.exposedByDefault=false
       --providers.file.directory=/etc/traefik
       --entrypoints.websecure.address=:443
+      --entrypoints.wg.address=:50180/udp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config:/etc/traefik
