@@ -4,29 +4,44 @@ services:
     image: ghcr.io/siderolabs/omni:v0.34.0
     labels:
       traefik.enable: true
+      traefik.docker.network: traefik
+      # Web HTTPS entrypoint, TLS terminated by Traefik
       traefik.http.routers.omni.entrypoints: websecure
       traefik.http.routers.omni.tls: true
       traefik.http.routers.omni.rule: Host(`omni.bodkys.house`)
       traefik.http.routers.omni.service: omni
-      traefik.http.services.omni.loadbalancer.server.port: 8443
+      traefik.http.services.omni.loadbalancer.server.port: 8080
+      # Proxy HTTPS entrypoint, TLS terminated by Traefik
+      traefik.http.routers.omni-proxy.entrypoints: websecure
+      traefik.http.routers.omni-proxy.tls: true
+      traefik.http.routers.omni-proxy.rule: Host(`omni-proxy.bodkys.house`)
+      traefik.http.routers.omni-proxy.service: omni-proxy
+      traefik.http.services.omni-proxy.loadbalancer.server.port: 8100
+      # Proxy HTTPS entrypoint, TLS terminated by Traefik
+      traefik.http.routers.omni-link.entrypoints: websecure
+      traefik.http.routers.omni-link.tls: true
+      traefik.http.routers.omni-link.rule: Host(`omni-link.bodkys.house`)
+      traefik.http.routers.omni-link.service: omni-link
+      traefik.http.services.omni-link.loadbalancer.server.port: 8090
+      # Wireguard UDP entrypoint
+      traefik.udp.routers.omni-wg.entrypoints: wg
+      traefik.udp.services.omni.loadbalancer.server.port: 50180
     command: >
       --account-id=${OMNI_ACCOUNT_UUID}
       --name=omni
-      --cert=/tls.crt
-      --key=/tls.key
-      --machine-api-cert=/tls.crt
-      --machine-api-key=/tls.key
       --private-key-source='file:///omni.asc'
       --event-sink-port=8091
-      --bind-addr=0.0.0.0:8443
-      --machine-api-bind-addr=0.0.0.0:8090
-      --k8s-proxy-bind-addr=0.0.0.0:8100
+      --bind-addr=:8080
+      --machine-api-bind-addr=:8090
+      --k8s-proxy-bind-addr=:8100
       --advertised-api-url=https://omni.bodkys.house/
-      --advertised-kubernetes-proxy-url=https://omni.bodkys.house:8100/
-      --siderolink-api-advertised-url=https://omni.bodkys.house:8090/
-      --siderolink-wireguard-advertised-addr=omni.bodkys.house:50180/
+      --advertised-kubernetes-proxy-url=https://omni-proxy.bodkys.house/
+      --siderolink-api-advertised-url=https://omni-link.bodkys.house/
+      --siderolink-wireguard-advertised-addr=192.168.1.7:50180/
       --initial-users=${INITIAL_USER_EMAILS}
       ${AUTH}
+    devices:
+      - /dev/net/tun
     env_file:
       - .env
     cap_add:
@@ -36,8 +51,9 @@ services:
       - /etc/omni/omni.asc:/omni.asc
       - /etc/omni/tls.crt:/tls.crt
       - /etc/omni/tls.key:/tls.key
-      - /dev/net/tun:/dev/net/tun
-    network_mode: host
+    networks:
+      - omni
+      - traefik
     restart: unless-stopped
 
 networks:
